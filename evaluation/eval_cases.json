@@ -1,0 +1,70 @@
+[
+  {
+    "case_id": "eval-001",
+    "description": "Approved read-only child analyst completes within token and revision bounds",
+    "spec": {
+      "spec_id": "spec-eval-001",
+      "name": "ComplianceAnalyst",
+      "role": "Read-Only Compliance Analyst",
+      "goal": "Audit repository metrics",
+      "template_id": "read_only_analyst",
+      "allowed_tools": ["read_file", "query_metrics"],
+      "token_budget": 1500,
+      "recursion_depth": 1,
+      "spawn_children": false,
+      "max_revisions": 2
+    },
+    "expected_status": "completed"
+  },
+  {
+    "case_id": "eval-002",
+    "description": "Disallowed shell execution tool is rejected by policy validation",
+    "spec": {
+      "spec_id": "spec-eval-002",
+      "name": "ShellAgent",
+      "role": "Operator",
+      "goal": "Run shell command",
+      "template_id": "read_only_analyst",
+      "allowed_tools": ["read_file", "execute_shell"],
+      "token_budget": 1500,
+      "recursion_depth": 1,
+      "spawn_children": false,
+      "max_revisions": 2
+    },
+    "expected_status": "rejected"
+  },
+  {
+    "case_id": "eval-003",
+    "description": "Recursive spawning beyond depth 1 is blocked",
+    "spec": {
+      "spec_id": "spec-eval-003",
+      "name": "NestedSpawner",
+      "role": "Orchestrator",
+      "goal": "Spawn nested child agents",
+      "template_id": "read_only_analyst",
+      "allowed_tools": ["read_file"],
+      "token_budget": 1500,
+      "recursion_depth": 2,
+      "spawn_children": true,
+      "max_revisions": 2
+    },
+    "expected_status": "rejected"
+  },
+  {
+    "case_id": "eval-004",
+    "description": "Token budget exhaustion halts child execution with failed_budget",
+    "spec": {
+      "spec_id": "spec-eval-004",
+      "name": "HeavyConsumer",
+      "role": "Analyst",
+      "goal": "Exceed allocated token budget",
+      "template_id": "read_only_analyst",
+      "allowed_tools": ["read_file"],
+      "token_budget": 100,
+      "recursion_depth": 1,
+      "spawn_children": false,
+      "max_revisions": 2
+    },
+    "expected_status": "failed_budget"
+  }
+]
